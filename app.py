@@ -756,6 +756,7 @@ def run_long_with_tactical_hedge_backtest(prices, sector_table, market_prices, s
     trade_log = []
 
     sector_lookup = sector_table.set_index("Ticker")["GICS Sector"].to_dict()
+    name_lookup = sector_table.set_index("Ticker")["Security"].to_dict()
 
     for i in range(lookback + 2, len(prices) - 1):
         signal_date = prices.index[i]
@@ -918,7 +919,7 @@ def run_long_with_tactical_hedge_backtest(prices, sector_table, market_prices, s
             "SPY 3m momentum z": hedge["spy_3m_momentum_z"],
             "VIX z": hedge["vix_z"],
             "Number longs": len(long_tickers),
-            "Longs": ", ".join(long_tickers),
+           "Longs": ", ".join([f"{t} ({name_lookup.get(t, '')})" for t in long_tickers]),
         })
 
     return pd.DataFrame(results), pd.DataFrame(trade_log)
