@@ -15,7 +15,7 @@ st.set_page_config(page_title="S&P 500 Long + Tactical Hedge Lab", layout="wide"
 
 LOOKBACK = 30
 P_THRESHOLD = 0.10
-PRICE_PERIOD = "3y"
+PRICE_PERIOD = "5y"
 MAX_LONGS = 3
 
 # DRAM / memory-cycle proxy settings
