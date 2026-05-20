@@ -573,7 +573,14 @@ def show_backtest(name, bt):
     c4.metric("Sharpe ratio", f"{sharpe:.2f}")
     c5.metric("Max drawdown", f"{max_drawdown:.2%}")
 
-    st.line_chart(bt.set_index("Date")[["Equity curve", "Long book equity", "Hedge equity"]])
+    st.line_chart(
+    bt.set_index("Date")[[
+        "Equity curve",
+        "Long book equity",
+        "Hedge equity",
+        "SPY equity",
+    ]]
+)
 
     st.markdown("**Recent portfolio history**")
     st.dataframe(bt.tail(30), use_container_width=True)
