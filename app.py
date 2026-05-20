@@ -807,7 +807,8 @@ def run_long_with_tactical_hedge_backtest(prices, sector_table, market_prices, s
                 trade_log.append({
                     "Date": signal_date,
                     "Ticker": ticker,
-                    "Action": "EXIT",
+"Security": name_lookup.get(ticker, ""),
+"Action": "EXIT",
                     "Reason": exit_reason,
                     "P-value": pval,
                     "Trend": trend,
@@ -883,6 +884,7 @@ def run_long_with_tactical_hedge_backtest(prices, sector_table, market_prices, s
                 trade_log.append({
                     "Date": signal_date,
                     "Ticker": row["Ticker"],
+                    "Security": name_lookup.get(row["Ticker"], 
                     "Action": "ENTER",
                     "Reason": "Normalised with positive trend and upward revision pressure",
                     "P-value": row["P-value"],
