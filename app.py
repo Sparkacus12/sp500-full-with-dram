@@ -930,6 +930,108 @@ bt, trades = run_long_with_tactical_hedge_backtest(
 
 bt = show_backtest("Long normalisation strategy + tactical SPY hedge", bt)
 
+st.markdown("### Current portfolio and today's recommended actions")
+
+if bt is None or bt.empty:
+    st.write("No current portfolio available.")
+else:
+    latest_row = bt.iloc[-1]
+    latest_date = latest_row["Date"]
+
+    current_longs = latest_row["Longs"]
+    hedge_active = latest_row["Hedge active"]
+    hedge_size = latest_row["Hedge size"]
+
+    c1, c2, c3 = st.columns(3)
+
+    c1.metric("Current long positions", int(latest_row["Number longs"]))
+    c2.metric("SPY hedge active", "Yes" if hedge_active else "No")
+    c3.metric("SPY hedge size", f"{hedge_size:.0%}")
+
+    st.markdown("#### Current holdings")
+
+    holdings_rows = []
+
+    if isinstance(current_longs, str) and current_longs.strip() != "":
+        for ticker in current_longs.split(", "):
+            holdings_rows.append({
+                "Position": "LONG",
+                "Ticker": ticker,
+                "Size": "Equal-weight long book",
+            })
+
+    if hedge_active:
+        holdings_rows.append({
+            "Position": "SHORT",
+            "Ticker": "SPY",
+            "Size": f"{hedge_size:.0%} hedge",
+        })
+
+    if holdings_rows:
+        st.dataframe(pd.DataFrame(holdings_rows), use_container_width=True)
+    else:
+        st.write("No active positions.")
+
+    st.markdown("#### Today's recommended trades")
+
+    action_rows = []
+
+    # Stock trade actions from the latest signal date
+    if not trades.empty:
+        latest_trade_date = trades["Date"].max()
+        todays_trades = trades[trades["Date"] == latest_trade_date]
+
+        for _, row in todays_trades.iterrows():
+            if row["Action"] == "ENTER":
+                action_rows.append({
+                    "Action": "BUY",
+                    "Ticker": row["Ticker"],
+                    "Reason": row.get("Reason", "New long signal"),
+                })
+
+            elif row["Action"] == "EXIT":
+                action_rows.append({
+                    "Action": "SELL",
+                    "Ticker": row["Ticker"],
+                    "Reason": row.get("Reason", "Exit signal"),
+                })
+
+    # Hedge change versus previous day
+    if len(bt) >= 2:
+        previous_row = bt.iloc[-2]
+        previous_hedge = bool(previous_row["Hedge active"])
+        current_hedge = bool(latest_row["Hedge active"])
+
+        if current_hedge and not previous_hedge:
+            action_rows.append({
+                "Action": "ADD HEDGE",
+                "Ticker": "SPY",
+                "Reason": "Loose financial conditions plus euphoric/complacent sentiment",
+            })
+
+        elif previous_hedge and not current_hedge:
+            action_rows.append({
+                "Action": "REMOVE HEDGE",
+                "Ticker": "SPY",
+                "Reason": "Hedge trigger no longer active",
+            })
+
+        elif current_hedge and previous_hedge:
+            previous_size = float(previous_row["Hedge size"])
+            current_size = float(latest_row["Hedge size"])
+
+            if current_size != previous_size:
+                action_rows.append({
+                    "Action": "ADJUST HEDGE",
+                    "Ticker": "SPY",
+                    "Reason": f"Change hedge from {previous_size:.0%} to {current_size:.0%}",
+                })
+
+    if action_rows:
+        st.dataframe(pd.DataFrame(action_rows), use_container_width=True)
+    else:
+        st.success("No new trades today. Maintain current portfolio.")
+
 st.markdown("### Portfolio history")
 if bt is not None and not bt.empty:
     cols = [
