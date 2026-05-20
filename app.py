@@ -545,6 +545,7 @@ def performance_stats(bt):
     bt["Equity curve"] = (1 + bt["Return"]).cumprod()
     bt["Long book equity"] = (1 + bt["Long book return"]).cumprod()
     bt["Hedge equity"] = (1 + bt["Hedge return"]).cumprod()
+    bt["SPY equity"] = (1 + bt["SPY return"]).cumprod()
 
     total_return = bt["Equity curve"].iloc[-1] - 1
     annualised_return = bt["Equity curve"].iloc[-1] ** (252 / len(bt)) - 1
