@@ -890,18 +890,18 @@ def run_long_with_tactical_hedge_backtest(prices, sector_table, market_prices, s
             for _, row in new_longs.iterrows():
                 positions[row["Ticker"]] = "LONG"
                 trade_log.append({
-                    "Date": signal_date,
-                    "Ticker": row["Ticker"],
-                    "Security": name_lookup.get(row["Ticker"], 
-                    "Action": "ENTER",
-                    "Reason": "Normalised with positive trend and upward revision pressure",
-                    "P-value": row["P-value"],
-                    "Trend": row["Trend"],
-                    "Implied revision score": row["Implied revision score"],
-                    "FRED macro score": row["FRED macro score"],
-                    "Market macro score": row["Market macro score"],
-                    "Combined macro score": row["Combined macro score"],
-                })
+    "Date": signal_date,
+    "Ticker": row["Ticker"],
+    "Security": name_lookup.get(row["Ticker"], ""),
+    "Action": "ENTER",
+    "Reason": "Normalised with positive trend and upward revision pressure",
+    "P-value": row["P-value"],
+    "Trend": row["Trend"],
+    "Implied revision score": row["Implied revision score"],
+    "FRED macro score": row["FRED macro score"],
+    "Market macro score": row["Market macro score"],
+    "Combined macro score": row["Combined macro score"],
+})
 
         next_returns = returns.loc[trade_date]
         long_tickers = list(positions.keys())
