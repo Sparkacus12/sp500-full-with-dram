@@ -916,29 +916,27 @@ def run_long_with_tactical_hedge_backtest(prices, sector_table, market_prices, s
 
         portfolio_return = long_return + hedge_return
 
-turnover_cost = 0.0
+        # approximate trading costs
+        entries_today = len([
+            t for t in trade_log
+            if t["Date"] == signal_date and t["Action"] == "ENTER"
+        ])
 
-# approximate trading costs
-entries_today = len([
-    t for t in trade_log
-    if t["Date"] == signal_date and t["Action"] == "ENTER"
-])
+        exits_today = len([
+            t for t in trade_log
+            if t["Date"] == signal_date and t["Action"] == "EXIT"
+        ])
 
-exits_today = len([
-    t for t in trade_log
-    if t["Date"] == signal_date and t["Action"] == "EXIT"
-])
+        total_trades_today = entries_today + exits_today
 
-total_trades_today = entries_today + exits_today
+        # 25 bps round-trip assumption
+        cost_per_trade = 0.0025
 
-# 25 bps round-trip assumption
-cost_per_trade = 0.0025
+        turnover_cost = total_trades_today * cost_per_trade / max(MAX_LONGS, 1)
 
-turnover_cost = total_trades_today * cost_per_trade / max(MAX_LONGS, 1)
+        portfolio_return -= turnover_cost
 
-portfolio_return -= turnover_cost
-
-results.append({
+        results.append({
             "Date": trade_date,
             "Return": portfolio_return,
             "Trading cost": turnover_cost,
@@ -952,7 +950,7 @@ results.append({
             "SPY 3m momentum z": hedge["spy_3m_momentum_z"],
             "VIX z": hedge["vix_z"],
             "Number longs": len(long_tickers),
-           "Longs": ", ".join([f"{t} ({name_lookup.get(t, '')})" for t in long_tickers]),
+            "Longs": ", ".join([f"{t} ({name_lookup.get(t, '')})" for t in long_tickers]),
         })
 
     return pd.DataFrame(results), pd.DataFrame(trade_log)
