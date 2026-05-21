@@ -930,7 +930,7 @@ def run_long_with_tactical_hedge_backtest(prices, sector_table, market_prices, s
         total_trades_today = entries_today + exits_today
 
         # 25 bps round-trip assumption
-        cost_per_trade = 0.0025
+        cost_per_trade = 0.001
 
         turnover_cost = total_trades_today * cost_per_trade / max(MAX_LONGS, 1)
 
