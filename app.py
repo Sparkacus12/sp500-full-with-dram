@@ -941,7 +941,7 @@ portfolio_return -= turnover_cost
         results.append({
             "Date": trade_date,
             "Return": portfolio_return,
-             "Trading cost": turnover_cost,
+            "Trading cost": turnover_cost,
             "Long book return": long_return,
             "Hedge return": hedge_return,
             "SPY return": spy_ret,
