@@ -938,7 +938,7 @@ turnover_cost = total_trades_today * cost_per_trade / max(MAX_LONGS, 1)
 
 portfolio_return -= turnover_cost
 
-        results.append({
+results.append({
             "Date": trade_date,
             "Return": portfolio_return,
             "Trading cost": turnover_cost,
